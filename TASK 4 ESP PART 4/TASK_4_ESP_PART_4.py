@@ -1,4 +1,5 @@
 import datetime
+from ftplib import all_errors
 import pandas as pd
 import matplotlib.pyplot as plt
 import time
@@ -13,16 +14,13 @@ for row in datareader:
     all_data.append(row)
 
 
-
-
-
 def mainmenu():
     print("\t\t****Welcome to the Dashboard****")
     print("")
     print('1) Return all current data')
     print('2) Return data for a specific region')
     print('3) Return data for a specific property type')
-    print("4 )")
+    print("4) Return highest region value increase")
     return int(input("Enter your selection :"))
 
 
@@ -61,7 +59,7 @@ def region_check(region, startdate, enddate):  # region, startdate, enddate
     plt.ylabel("Value")
     time.sleep(1.5)
     plt.show()
-    return result6
+    return result
     input("Enter to proceed :")
   
 
@@ -94,18 +92,81 @@ def property_type_check(property_input, startdate, enddate):  # region, startdat
     input("Enter to proceed :")
     
 def region_highest():
+    all_regions = []
+    regions_available = []
+    all_regions_increase = []
+    region_ave = []
+    region_ave_name = []
+    
+    for ind in df.index:
+        all_regions.append(df["Region"][ind])
+
+    for i in range(0,len(all_regions)):
+        if all_regions[i] in regions_available:
+            pass
+        else:
+            regions_available.append(all_regions[i])
+
+
     length_of_array = len(all_data)
 
-    for i in range(0,length_of_array):
-        print(all_data[i])
+    for i in range(1,length_of_array):
+        total = 0
         for j in range(4, len(all_data[0])):
-            
+            temp_value_holder = float(all_data[i][j])
+            temp_value_holder = round(temp_value_holder,2)
+            total = total + temp_value_holder
+            total = round(total,2)
+        format_array = [all_data[i][1],total]
+        all_regions_increase.append(format_array)
 
-                     
+    for j in range(0,len(regions_available)):
+        region_repeated = 0
+        total_in_area_ = 0
+        for places in all_regions_increase:
+            if places[0] == regions_available[j]:
+                total_in_area_ = places[1] + total_in_area_
+                region_repeated += 1
+                ave_in_reg = total_in_area_ / region_repeated
+                region_cal = places[0]
+        region_ave.append([region_cal,ave_in_reg])
+
+    #Bubble sort
+    has_swapped = True
+    while has_swapped:
+        has_swapped = False
+        for h in range(0,len(region_ave)-1):
+            print(region_ave)
+            if region_ave[h][1] > region_ave[h+1][1]:
+                temp= region_ave[h][1]
+                temp_2 = region_ave[h][0]
+                region_ave[h][1] = region_ave[h+1][1]
+                region_ave[h][0] = region_ave[h+1][0]
+                region_ave[h+1][1] = temp
+                region_ave[h+1][0] = temp_2
+                has_swapped = True
+            else:
+                 pass
+    print(region_ave)
+    length_of_region_ave = len(region_ave) - 1
+    DUB_W = region_ave[length_of_region_ave]
     
-  
+    print(DUB_W)
+    print(25*"\n")
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ")
+    print()
+    print(f" * HIGHEST REGION VALUE INCREASE WAS {DUB_W[0]} WITH {DUB_W[1]} % ")
+    print()
+    print("- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ")
+    print(2*"\n")
+    
+
+
+
+            
 x = mainmenu()
 while x == 1 or x == 2 or x == 3 or x == 4:
+    global regions_available
     if x == 1:
         alldata()
 
